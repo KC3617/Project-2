@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dodge The Comet!</title>
+    <script src="https://cdn.jsdelivr.net/npm/p5@1.9.0/lib/p5.js"></script>
+    <link rel="stylesheet" href="style.css"/>
+    <script>
+        
+        let x  = 0;
+        let y = -30;
+        let end = 890;
+        let xEnd = 1905;
+        let radius = 20;
+        
+        function setup() {
+            createCanvas(1905, 890);
+            background(0);
+        }
+
+        function draw() {
+            background("rgba(0, 0, 0, 0.1)");
+            noStroke();
+            fill(255,255,255);
+            circle(x, y, radius * 2);
+            x = x + 5;
+            y += 3;
+
+            function explode() {
+            
+            fill(255, 0, 0);
+            circle(x, y, 200);
+            x = random(0, 1000);
+            y = random(-30, 30);
+
+            }
+
+
+            let distance = dist(x, y, mouseX, mouseY);
+
+            let isOverCircle = distance < radius;
+            if (isOverCircle) {
+                
+            explode();
+
+            }
+
+
+            if (y >= end) {
+
+           explode();
+           
+            }
+
+            if (x >= xEnd) {
+
+            explode();
+
+            }
+        }
+
+    </script>
+</head>
+<body>
+    
+</body>
+</html>
