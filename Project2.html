@@ -12,7 +12,7 @@
         let y = -30;
         let end = 890;
         let xEnd = 1905;
-        let radius = random(10, 81);
+        let radius = 20;
         
         function setup() {
             createCanvas(1905, 890);
@@ -23,7 +23,7 @@
             background("rgba(0, 0, 0, 0.1)");
             noStroke();
             fill(255,255,255);
-            circle(x, y);
+            circle(x, y, radius * 2);
             x = x + 5;
             y += 3;
 
