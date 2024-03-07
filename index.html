@@ -12,8 +12,10 @@
         let xEnd = 1905;
         let radius = 25;
         let stars = [];
-        let mouse_trail = [];
         
+        let x = 0;
+        let y = 0;
+
         function setup() {
             createCanvas(1905, 890);
             background(0);
@@ -56,7 +58,7 @@
             push();
             translate(width / 2, height / 4);
             fill(255,255,255);
-            circle(875, -150, radius * 2);
+            ellipse(875, -150, radius * 2);
             pop();
 
             function explode(star) {
@@ -107,23 +109,13 @@
             endShape(CLOSE);
         }
 
-        push();
-            mouse_trail.push(new p5.Vector(mouseX, mouseY));
-
-            if (mouse_trail > 30) {
-                mouse_trail.pop();
-            }
-
-            for (let i = 0; i < mouse_trail.length; i++) {
-                let p = mouse_trail[i];
-
-                let size = 35.0 * i / mouse_trail.length;
-                noStroke();
-                fill("rgba(255, 255, 255, 0.95)");
-                circle(p.x, p.y, size);
-            }
-
-            pop();
+        push(); 
+        x = lerp(x, mouseX, 0.1);
+        y = lerp(y, mouseY, 0.1);
+        blendMode(DIFFERENCE);
+        fill(255);
+        circle(x, y, 40);
+        pop();
 
     }
 
