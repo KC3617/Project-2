@@ -12,11 +12,12 @@
         let xEnd = 1905;
         let radius = 25;
         let stars = [];
+        let mouse_trail = [];
         
         function setup() {
             createCanvas(1905, 890);
             background(0);
-            for ( i = 0; i < 20; i++){
+            for ( i = 0; i < 15; i++){
           let star = {
             x: 0,
             y: -30,
@@ -27,15 +28,30 @@
         }
 
         function draw() {
+            push();
+            c1 = color(0);
+            c2 = color(5, 2, 87);
+            pop();
+            
+            for(let y=0; y<height; y++){
+                n = map(y,0,height,0,1);
+                let newc = lerpColor(c1,c2,n);
+                stroke(newc);
+                line(0,y,width, y);
+            }
+            pop();
+
+            push();
             background("rgba(0, 0, 0, 0.15)");
             noStroke();
             for (let star of stars){
-            fill(255,245,100);
+            fill(250,245,110);
             drawStar(star.x, star.y, 15, 45, 5);
             
             star.x += 15;
             star.y += 12;
             }
+            pop();
 
             push();
             translate(width / 2, height / 4);
@@ -90,11 +106,30 @@
             }
             endShape(CLOSE);
         }
+
+        push();
+            mouse_trail.push(new p5.Vector(mouseX, mouseY));
+
+            if (mouse_trail > 30) {
+                mouse_trail.pop();
+            }
+
+            for (let i = 0; i < mouse_trail.length; i++) {
+                let p = mouse_trail[i];
+
+                let size = 35.0 * i / mouse_trail.length;
+                noStroke();
+                fill("rgba(255, 255, 255, 0.95)");
+                circle(p.x, p.y, size);
+            }
+
+            pop();
+
     }
 
     </script>
 </head>
 <body>
-    
+
 </body>
 </html>
