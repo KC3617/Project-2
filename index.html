@@ -12,20 +12,21 @@
         let xEnd = 1905;
         let radius = 25;
         let stars = [];
+        let maxStars = 20; // Maximum number of stars
+        let minStars = 5; // Minimum number of stars
+        let score = 0; // Initialize score variable
         
-        let x = 0;
-        let y = 0;
-
         function setup() {
-            createCanvas(windowWidth,windowHeight);
+            createCanvas(windowWidth, windowHeight);
             background(0);
             score = 0;
-            for ( i = 0; i < 15; i++){
-          let star = {
-            x: 0,
-            y: -30,
-          }
-          stars.push(star)
+            for (let i = 0; i < minStars; i++) {
+                let star = {
+                    x: random(-1000, 1500),
+                    y: random(-50, 30),
+                    speed: random(1, 5) // Speed of stars falling
+                }
+                stars.push(star);
             }
             console.log(stars);
         }
@@ -36,11 +37,11 @@
             c2 = color(5, 2, 87);
             pop();
             
-            for(let y=0; y<height; y++){
-                n = map(y,0,height,0,1);
-                let newc = lerpColor(c1,c2,n);
+            for (let y=0; y<height; y++){
+                n = map(y, 0, height, 0, 1);
+                let newc = lerpColor(c1, c2, n);
                 stroke(newc);
-                line(0,y,width, y);
+                line(0, y, width, y);
             }
             pop();
 
@@ -48,54 +49,43 @@
             background("rgba(0, 0, 0, 0.15)");
             noStroke();
             for (let star of stars){
-            fill(250,245,110);
-            drawStar(star.x, star.y, 15, 45, 5);
-            
-            star.x += 15;
-            star.y += 12;
+                fill(250,245,110);
+                drawStar(star.x, star.y, 15, 45, 5);
+                
+                star.x += 15;
+                star.y += star.speed;
+                
+                if (star.y >= end || star.x >= xEnd) {
+                    resetStar(star);
+                }
             }
             pop();
 
             push();
             translate(width / 2, height / 4);
-            fill(255,255,255);
-            ellipse(875, -150, radius * 2);
+            fill(223, 104, 32);
+            ellipse(-850, 575, radius * 3.5);
             pop();
 
-            function explode(star) {
-            
-            fill("rgba(255, 0, 0, 0.65)");
-            circle(star.x, star.y, 170);
-            star.x = random(-1000, 1500);
-            star.y = random(-50, 30);
-
-            }
-
+            // Check if the cursor is in contact with any star
             for (let star of stars) {
-            let distance = dist(star.x, star.y, mouseX, mouseY);
-
-            let isOverStar = distance < radius;
-            if (isOverStar) {
-                
-            explode(star);
-
+                let distance = dist(star.x, star.y, mouseX, mouseY);
+                let isOverStar = distance < radius;
+                if (isOverStar) {
+                    explode(star);
+                    score = max(0, score - 1); // Deduct score when cursor is over a star
+                }
             }
-
-
-            if (star.y >= end) {
-
-           explode(star);
-           
-            }
-
-            if (star.x >= xEnd) {
-
-            explode(star);
-
-            }
+            
+            // Display the score
+            push();
+            textSize(32);
+            fill(255);
+            text("Score: " + max(0, score), 50, 50);
+            pop();
         }
 
-            function drawStar(x, y, radius1, radius2, npoints) {
+        function drawStar(x, y, radius1, radius2, npoints) {
             let angle = TWO_PI / npoints;
             let halfAngle = angle / 2.0;
             beginShape();
@@ -110,15 +100,31 @@
             endShape(CLOSE);
         }
 
-        push(); 
-        x = lerp(x, mouseX, 0.1);
-        y = lerp(y, mouseY, 0.1);
-        blendMode(DIFFERENCE);
-        fill(255);
-        circle(x, y, 40);
-        pop();
+        function explode(star) {
+            fill("rgba(255, 0, 0, 0.65)");
+            circle(star.x, star.y, 170);
+            resetStar(star);
+        }
 
-    }
+        // Reset star position and speed
+        function resetStar(star) {
+            star.x = random(-2000, -600);
+            star.y = random(0, 300);
+            star.speed = random(1, 5);
+        }
+
+        // Add event listener to create a new star on click
+        function mouseClicked() {
+            if (stars.length < maxStars) {
+                let newStar = {
+                    x: random(-1000, 1500),
+                    y: random(-50, 30),
+                    speed: random(1, 5)
+                };
+                stars.push(newStar);
+                score++; // Add score when new star is added
+            }
+        }
 
     </script>
 </head>
