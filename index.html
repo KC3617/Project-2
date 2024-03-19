@@ -12,77 +12,97 @@
         let xEnd = 1905;
         let radius = 25;
         let stars = [];
-        let maxStars = 20; // Maximum number of stars
-        let minStars = 5; // Minimum number of stars
-        let score = 0; // Initialize score variable
-        
+        let maxStars = 21;
+        let minStars = 5; 
+        let score = 0; 
+        let gameStarted = false; // Track if the game has started
+        let gameEnded = false; // Track if the game has ended
+
         function setup() {
             createCanvas(windowWidth, windowHeight);
             background(0);
-            score = 0;
-            for (let i = 0; i < minStars; i++) {
-                let star = {
-                    x: random(-1000, 1500),
-                    y: random(-50, 30),
-                    speed: random(1, 5) // Speed of stars falling
-                }
-                stars.push(star);
-            }
-            console.log(stars);
         }
 
         function draw() {
-            push();
-            c1 = color(0);
-            c2 = color(5, 2, 87);
-            pop();
-            
-            for (let y=0; y<height; y++){
-                n = map(y, 0, height, 0, 1);
-                let newc = lerpColor(c1, c2, n);
-                stroke(newc);
-                line(0, y, width, y);
-            }
-            pop();
-
-            push();
-            background("rgba(0, 0, 0, 0.15)");
-            noStroke();
-            for (let star of stars){
-                fill(250,245,110);
-                drawStar(star.x, star.y, 15, 45, 5);
+            if (!gameStarted) {
+                // Display start screen
+                background(0);
+                fill(255);
+                textAlign(CENTER, CENTER);
+                textSize(48);
+                text("Path To Venus!", width / 2, height / 2 - 50);
+                textSize(20);
+                text("(Avoid the stars to reach Venus)", width / 2, height / 2 + 5);
+                textSize(24);
+                text("Click to Start", width / 2, height / 2 + 50);
+            } else if (!gameEnded) {
+                // Game in progress
+                push();
+                c1 = color(0);
+                c2 = color(5, 2, 87);
+                pop();
                 
-                star.x += 15;
-                star.y += star.speed;
+                for (let y=0; y<height; y++){
+                    n = map(y, 0, height, 0, 1);
+                    let newc = lerpColor(c1, c2, n);
+                    stroke(newc);
+                    line(0, y, width, y);
+                }
+                pop();
+        
+                push();
+                background("rgba(0, 0, 0, 0.15)");
+                noStroke();
+                for (let star of stars){
+                    fill(250,245,110);
+                    drawStar(star.x, star.y, 15, 45, 5);
+                    
+                    star.x += 15;
+                    star.y += star.speed;
+                    
+                    if (star.y >= end || star.x >= xEnd) {
+                        resetStar(star);
+                    }
+                }
+                pop();
+        
+                push();
+                translate(width / 2, height / 4);
+                fill(223, 104, 32);
+                ellipse(-850, 575, radius * 3.5);
+                pop();
                 
-                if (star.y >= end || star.x >= xEnd) {
-                    resetStar(star);
+                for (let star of stars) {
+                    let distance = dist(star.x, star.y, mouseX, mouseY);
+                    let isOverStar = distance < radius;
+                    if (isOverStar) {
+                        explode(star);
+                        score = max(0, score - 1); 
+                    }
                 }
-            }
-            pop();
-
-            push();
-            translate(width / 2, height / 4);
-            fill(223, 104, 32);
-            ellipse(-850, 575, radius * 3.5);
-            pop();
-
-            // Check if the cursor is in contact with any star
-            for (let star of stars) {
-                let distance = dist(star.x, star.y, mouseX, mouseY);
-                let isOverStar = distance < radius;
-                if (isOverStar) {
-                    explode(star);
-                    score = max(0, score - 1); // Deduct score when cursor is over a star
+                
+                push();
+                textSize(32);
+                textAlign(LEFT);
+                fill(255);
+                text("Score: " + max(0, score), 50, 50);
+                pop();
+        
+                if (score >= 20) {
+                    gameEnded = true;
                 }
+            } else {
+                // Display end screen
+                background(5, 2, 87);
+                fill(255);
+                textAlign(CENTER, CENTER);
+                textSize(48);
+                text("Game Over!", width / 2, height / 2 - 50);
+                textSize(24);
+                text("Final Score: " + score, width / 2, height / 2);
+                textSize(18);
+                text("Refresh to play again", width / 2, height / 2 + 50);
             }
-            
-            // Display the score
-            push();
-            textSize(32);
-            fill(255);
-            text("Score: " + max(0, score), 50, 50);
-            pop();
         }
 
         function drawStar(x, y, radius1, radius2, npoints) {
@@ -106,23 +126,31 @@
             resetStar(star);
         }
 
-        // Reset star position and speed
         function resetStar(star) {
             star.x = random(-2000, -600);
             star.y = random(0, 300);
-            star.speed = random(1, 5);
+            star.speed = random(0.5, 10);
         }
 
         // Add event listener to create a new star on click
         function mouseClicked() {
-            if (stars.length < maxStars) {
-                let newStar = {
-                    x: random(-1000, 1500),
-                    y: random(-50, 30),
-                    speed: random(1, 5)
-                };
-                stars.push(newStar);
-                score++; // Add score when new star is added
+            if (!gameStarted) {
+                // Start the game on click
+                gameStarted = true;
+            } else if (gameEnded) {
+                // Reload the page to play again
+                location.reload();
+            } else {
+                // Add a new star when clicking during the game
+                if (stars.length < maxStars) {
+                    let newStar = {
+                        x: random(-1000, 1500),
+                        y: random(-50, 30),
+                        speed: random(1, 5)
+                    };
+                    stars.push(newStar);
+                    score++; // Add score when new star is added
+                }
             }
         }
 
