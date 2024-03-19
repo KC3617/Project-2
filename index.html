@@ -32,9 +32,11 @@
                 textSize(48);
                 text("Path To Venus!", width / 2, height / 2 - 50);
                 textSize(20);
-                text("(Avoid the stars to reach Venus)", width / 2, height / 2 + 5);
+                text("(Avoid the stars to reach Venus)", width / 2, height / 2);
+                textSize(18);
+                text("Reach 20 points to win!", width / 2, height / 2 + 30);
                 textSize(24);
-                text("Click to Start", width / 2, height / 2 + 50);
+                text("Click to Start", width / 2, height / 2 + 80);
             } else if (!gameEnded) {
                 // Game in progress
                 push();
@@ -68,7 +70,12 @@
         
                 push();
                 translate(width / 2, height / 4);
-                fill(223, 104, 32);
+                if (mouseIsPressed == true){
+                    fill(255, 0, 0);
+                }
+                else {
+                    fill(223, 104, 32);
+                }
                 ellipse(-850, 575, radius * 3.5);
                 pop();
                 
@@ -97,12 +104,17 @@
                 fill(255);
                 textAlign(CENTER, CENTER);
                 textSize(48);
-                text("Game Over!", width / 2, height / 2 - 50);
+                text("You Won!", width / 2, height / 2 - 50);
                 textSize(24);
                 text("Final Score: " + score, width / 2, height / 2);
                 textSize(18);
-                text("Refresh to play again", width / 2, height / 2 + 50);
+                text("Click to play again", width / 2, height / 2 + 50);
             }
+            push(); 
+            blendMode(DIFFERENCE);
+            fill(255);
+            circle(mouseX, mouseY, 40);
+            pop();
         }
 
         function drawStar(x, y, radius1, radius2, npoints) {
